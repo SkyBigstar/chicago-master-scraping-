@@ -1,0 +1,30 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+
+processors:
+
+extensions:
+  basicauth/client:
+    client_auth:
+      username: 732153
+      password: glc_eyJvIjoiOTM2OTA5IiwibiI6ImNoaWNhZ29jcmFzaGVzLWNoaWNhZ29jcmFzaGVzIiwiayI6IjgyWEg3YzVtYzBROFJMVDh2ZzZza3MxMiIsIm0iOnsiciI6InByb2QtZXUtd2VzdC0zIn19
+
+exporters:
+  otlphttp:
+    auth:
+      authenticator: basicauth/client
+    endpoint: https://otlp-gateway-prod-eu-west-3.grafana.net/otlp
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: []
+      exporters: [otlphttp]
+  telemetry:
+    logs:
+      level: debug
+  extensions: [basicauth/client]
+

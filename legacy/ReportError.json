@@ -1,0 +1,84 @@
+{
+  "name": "ReportError",
+  "nodes": [
+    {
+      "parameters": {},
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "position": [
+        240,
+        500
+      ],
+      "typeVersion": 1,
+      "id": "5b4a8acf-a8d9-44b6-931b-960cdb32c60e"
+    },
+    {
+      "parameters": {},
+      "name": "NoOp",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        680,
+        500
+      ],
+      "id": "e1bfa0a0-758f-4a87-a22c-759b080401e3"
+    },
+    {
+      "parameters": {
+        "resource": "mail",
+        "fromEmail": "youdiig@gmail.com",
+        "toEmail": "rimantas@keyspace.lt",
+        "subject": "[URGENT] Chicago crashes n8n error",
+        "contentValue": "=Your workflow with ID: {{$node[\"Error Trigger\"].json[\"workflow\"][\"id\"]}} and name: {{$node[\"Error Trigger\"].json[\"workflow\"][\"name\"]}} failed to execute.",
+        "additionalFields": {}
+      },
+      "name": "SendGrid",
+      "type": "n8n-nodes-base.sendGrid",
+      "typeVersion": 1,
+      "position": [
+        460,
+        500
+      ],
+      "id": "b4f016bb-09a1-4014-9d9e-6fc441690c1b",
+      "credentials": {
+        "sendGridApi": {
+          "id": "4",
+          "name": "SendGrid account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "SendGrid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SendGrid": {
+      "main": [
+        [
+          {
+            "node": "NoOp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "versionId": "06c7c7af-d8d7-4538-81f6-c2c256b61013",
+  "id": "3",
+  "meta": {
+    "instanceId": "375ca06e6300f38903097dfa75712057b1f090e165e1574b91aac44076c140c7"
+  },
+  "tags": []
+}

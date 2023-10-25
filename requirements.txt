@@ -1,0 +1,13 @@
+celery
+cloudscraper
+requests
+lxml
+redis
+python-dateutil
+phonenumbers
+mysql.connector
+mysql.connector.python
+pymysql
+sqlalchemy
+cryptography
+anticaptchaofficial

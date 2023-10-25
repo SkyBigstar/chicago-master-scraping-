@@ -1,0 +1,570 @@
+{
+  "name": "ChicagoCrashesV2",
+  "nodes": [
+    {
+      "parameters": {
+        "triggerTimes": {
+          "item": [
+            {
+              "hour": 6,
+              "minute": 30
+            },
+            {
+              "hour": 7,
+              "minute": 30
+            },
+            {
+              "hour": 8,
+              "minute": 30
+            },
+            {
+              "hour": 9,
+              "minute": 30
+            },
+            {
+              "hour": 10,
+              "minute": 30
+            },
+            {
+              "hour": 11,
+              "minute": 30
+            }
+          ]
+        }
+      },
+      "name": "Cron",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [
+        1720,
+        1360
+      ],
+      "id": "624c7976-494c-4b8c-b311-d7752275f907"
+    },
+    {
+      "parameters": {
+        "triggerTimes": {
+          "item": [
+            {
+              "hour": 13,
+              "minute": 30
+            },
+            {
+              "minute": 30
+            },
+            {
+              "hour": 15,
+              "minute": 30
+            },
+            {
+              "hour": 16,
+              "minute": 30
+            },
+            {
+              "hour": 18,
+              "minute": 30
+            },
+            {
+              "hour": 20,
+              "minute": 30
+            }
+          ]
+        }
+      },
+      "name": "Cron1",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [
+        1720,
+        1740
+      ],
+      "notesInFlow": true,
+      "id": "b2d67d7c-351c-44b9-bd65-7d198d24d86c"
+    },
+    {
+      "parameters": {
+        "triggerTimes": {
+          "item": [
+            {
+              "mode": "everyWeek",
+              "hour": 23,
+              "minute": 59,
+              "weekday": "0"
+            }
+          ]
+        }
+      },
+      "name": "Cron2",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [
+        1720,
+        1960
+      ],
+      "notesInFlow": true,
+      "id": "de5f550e-e84a-41d0-9056-e874fcfb164d",
+      "disabled": true,
+      "notes": "End of week"
+    },
+    {
+      "parameters": {
+        "authentication": "basicAuth",
+        "path": "launch",
+        "options": {}
+      },
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        1720,
+        1540
+      ],
+      "webhookId": "5557ffb4-ca37-4194-9c6d-c141c34915e8",
+      "notesInFlow": true,
+      "id": "71bcbe88-35e3-4733-81f5-755528a15032",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "3",
+          "name": "User"
+        }
+      },
+      "notes": "Handle form submission"
+    },
+    {
+      "parameters": {
+        "authentication": "basicAuth",
+        "path": "test",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "Webhook1",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        1540
+      ],
+      "webhookId": "50ed0d46-60d4-4d89-aa59-87987dd525c6",
+      "notesInFlow": true,
+      "id": "6a52c12a-6b86-4b45-8e80-8c69e9c66bc2",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "3",
+          "name": "User"
+        }
+      },
+      "notes": "Present form"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "=<html>\n<form action=\"/webhook/launch\" method=\"get\">\n  <div>\n    <label for=\"try_next\">Try next: </label>\n    <input type=\"text\" name=\"try_next\" value=\"1000\" id=\"try_next\" required>\n  </div>\n  <div>\n    <label for=\"try_prev\">Try previous</label>\n    <input type=\"text\" name=\"try_prev\" value=\"1000\" id=\"try_prev\" required>\n  </div>\n  <div>\n    <label for=\"force_start_rd\">Force start RD</label>\n    <input type=\"text\" name=\"force_start_rd\" id=\"force_start_rd\" required>\n  </div>\n  <div>\n    <input type=\"submit\" value=\"Launch\">\n  </div>\n</form>\n</html>",
+        "options": {}
+      },
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1540,
+        1540
+      ],
+      "notesInFlow": true,
+      "id": "1f5b0b05-af93-4881-aaa2-a4429e63b847",
+      "notes": "Present form"
+    },
+    {
+      "parameters": {
+        "command": "python3 /root/src/make_clean_report.py /root/data/ChicagoCrashes"
+      },
+      "name": "make_clean_report.py",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        2120,
+        1540
+      ],
+      "notesInFlow": true,
+      "id": "150906fe-50b4-41e3-83bf-f469a97377f7",
+      "notes": "Make clean data report"
+    },
+    {
+      "parameters": {
+        "command": "python3 /root/src/upload.py clean_"
+      },
+      "name": "upload.py clean_",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        2320,
+        1540
+      ],
+      "notesInFlow": true,
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "id": "3f4c2549-de6a-404c-a731-a56afb1a43dd",
+      "notes": "Upload clean data"
+    },
+    {
+      "parameters": {
+        "command": "python3 /root/src/send_clean.py"
+      },
+      "name": "send_clean.py",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        2500,
+        1360
+      ],
+      "notesInFlow": true,
+      "id": "1f39e6e0-71df-4f7d-b89b-03fc07beff29",
+      "notes": "Email clean data"
+    },
+    {
+      "parameters": {
+        "command": "python3 /root/src/send_sms.py +17089338699"
+      },
+      "name": "send_sms.py",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        2500,
+        1540
+      ],
+      "notesInFlow": true,
+      "alwaysOutputData": true,
+      "id": "c824f52f-5e24-46ce-896b-2869e658b202",
+      "notes": "Send SMS via Twilio"
+    },
+    {
+      "parameters": {
+        "command": "python3 /root/src/make_contact_report.py /root/data/ChicagoCrashes"
+      },
+      "name": "make_contact_report.py",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        2120,
+        1960
+      ],
+      "notesInFlow": true,
+      "id": "9d0b78e8-e2c0-4145-9a5a-fdaea78366a1",
+      "disabled": true,
+      "notes": "Make contact report"
+    },
+    {
+      "parameters": {
+        "command": "python3 /root/src/upload.py contact_"
+      },
+      "name": "upload.py contact_",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        2320,
+        1960
+      ],
+      "notesInFlow": true,
+      "retryOnFail": true,
+      "id": "e2a90e8a-58c9-44d3-9df2-4d57973bfed1",
+      "disabled": true,
+      "notes": "Upload contact report"
+    },
+    {
+      "parameters": {},
+      "name": "The End",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2720,
+        1540
+      ],
+      "notesInFlow": false,
+      "id": "8f42be7f-7cf5-48ba-819e-759ad710a1fa"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 3 1 1 *"
+            },
+            {
+              "field": "cronExpression",
+              "expression": "55 4 1 1 *"
+            },
+            {
+              "field": "cronExpression",
+              "expression": "55 9 1 1 *"
+            }
+          ]
+        }
+      },
+      "id": "3a84557c-301c-4897-a45f-23dc0eba43c1",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [
+        1720,
+        1160
+      ]
+    },
+    {
+      "parameters": {
+        "command": "python3 /root/src/scrape.py --dolt-db-dir /root/data/ChicagoCrashes --force-start-rd JG100000 --try-prev 0"
+      },
+      "name": "scrape.py - Force RD",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        1160
+      ],
+      "notesInFlow": true,
+      "retryOnFail": true,
+      "id": "63da9b1f-2a22-49bc-9ea9-b5f19a0e62ec",
+      "notes": "Run scraper (force new start RD)"
+    },
+    {
+      "parameters": {
+        "command": "python3 /root/src/scrape.py --dolt-db-dir /root/data/ChicagoCrashes --yesterday "
+      },
+      "name": "scrape.py - from yesterdays RD",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        1360
+      ],
+      "notesInFlow": true,
+      "retryOnFail": true,
+      "id": "6e2b8d1a-9228-4576-99b9-4161d2f3a45a",
+      "notes": "Run scraper (from yesterdays RD)"
+    },
+    {
+      "parameters": {
+        "command": "=python3 /root/src/scrape.py --dolt-db-dir /root/data/ChicagoCrashes --try-next {{$json[\"query\"][\"try_next\"]}} --try-prev {{$json[\"query\"][\"try_prev\"]}} --force-start-rd {{$json[\"query\"][\"force_start_rd\"]}}"
+      },
+      "name": "scrape.py - from webhook params",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        1540
+      ],
+      "notesInFlow": true,
+      "retryOnFail": true,
+      "id": "016c3990-cea8-4d50-96fd-5054c1e97a96",
+      "notes": "Run scraper from form"
+    },
+    {
+      "parameters": {
+        "command": "python3 /root/src/scrape.py --dolt-db-dir /root/data/ChicagoCrashes "
+      },
+      "name": "scrape.py - from todays RD",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        1740
+      ],
+      "notesInFlow": true,
+      "retryOnFail": true,
+      "id": "96aef9db-9c14-4c70-82e7-ef5f7707fb62",
+      "notes": "Run scraper (from todays RD)"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Cron": {
+      "main": [
+        [
+          {
+            "node": "scrape.py - from yesterdays RD",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cron1": {
+      "main": [
+        [
+          {
+            "node": "scrape.py - from todays RD",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cron2": {
+      "main": [
+        [
+          {
+            "node": "make_contact_report.py",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "scrape.py - from webhook params",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "make_clean_report.py": {
+      "main": [
+        [
+          {
+            "node": "upload.py clean_",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "send_clean.py",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "upload.py clean_": {
+      "main": [
+        [
+          {
+            "node": "send_sms.py",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "send_clean.py": {
+      "main": [
+        [
+          {
+            "node": "The End",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "send_sms.py": {
+      "main": [
+        [
+          {
+            "node": "The End",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "make_contact_report.py": {
+      "main": [
+        [
+          {
+            "node": "upload.py contact_",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "upload.py contact_": {
+      "main": [
+        [
+          {
+            "node": "send_sms.py",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "scrape.py - Force RD",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "scrape.py - Force RD": {
+      "main": [
+        [
+          {
+            "node": "make_clean_report.py",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "scrape.py - from yesterdays RD": {
+      "main": [
+        [
+          {
+            "node": "make_clean_report.py",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "scrape.py - from webhook params": {
+      "main": [
+        [
+          {
+            "node": "make_clean_report.py",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "scrape.py - from todays RD": {
+      "main": [
+        [
+          {
+            "node": "make_clean_report.py",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "errorWorkflow": "3"
+  },
+  "versionId": "c5757dba-221a-44c5-8d98-1188d5e683d8",
+  "id": "1",
+  "meta": {
+    "instanceId": "375ca06e6300f38903097dfa75712057b1f090e165e1574b91aac44076c140c7"
+  },
+  "tags": []
+}

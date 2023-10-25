@@ -1,0 +1,91 @@
+version: "3.8"
+
+services:
+  localredis:
+    entrypoint: redis-server --save "" --appendonly no # https://stackoverflow.com/a/41238678
+    image: redis:7.2.0-alpine3.18
+    ports:
+      - "127.0.0.1:6379:6379" # https://stackoverflow.com/questions/35429837/docker-compose-port-mapping
+    environment:
+      - TZ=America/Chicago
+    expose:
+      - "6379"
+    restart: always
+  worker:
+    build:
+      dockerfile: backend.Dockerfile
+    entrypoint: python backend.py worker
+    environment:
+      - TZ=America/Chicago
+    depends_on: 
+      - localredis
+      - localmysql
+    deploy:
+      replicas: 4
+    restart: always
+    volumes:
+      - ./sqlite_data:/data:rw
+  scheduler:
+    build:
+      dockerfile: backend.Dockerfile
+    entrypoint: python backend.py scheduler
+    environment:
+      - TZ=America/Chicago
+    restart: always
+    depends_on: 
+      - localredis
+      - localmysql
+    volumes:
+      - ./sqlite_data:/data:rw
+  flower:
+    image: mher/flower
+    restart: always
+    command: celery flower --basic-auth=user:C8mMjzDRan7uPzKw3z
+    working_dir: /data
+    ports:
+      - "0.0.0.0:5555:5555"
+    environment:
+      CELERY_BROKER_URL: redis://localredis
+    depends_on:
+      - worker
+      - scheduler
+      - localredis
+  localmysql:
+    image: mysql
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=C8mMjzDRan7uPzKw3z
+      - MYSQL_ROOT_HOST=0.0.0.0
+      - MYSQL_DATABASE=chicagocrashes
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=C8mMjzDRan7uPzKw3z
+      - TZ=America/Chicago
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+    expose:
+      - "3306:3306"
+      - "33060:33060"
+    ports:
+      - "3306:3306"
+      - "33060:33060"
+  phpmyadmin:
+    image: phpmyadmin
+    depends_on:
+      - localmysql
+    restart: always
+    ports:
+      - "0.0.0.0:80:80"
+    environment:
+      - MYSQL_ROOT_PASSWORD=C8mMjzDRan7uPzKw3z
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=C8mMjzDRan7uPzKw3z
+      - PMA_ARBITRARY=1
+      - PMA_USER=user
+      - PMA_PASSWORD=C8mMjzDRan7uPzKw3z
+      - PMA_HOST=localmysql
+      - PMA_CONTROLUSER=user
+      - PMA_CONTROLPASS=C8mMjzDRan7uPzKw3z
+    volumes:
+      - ./htpasswd:/etc/httpd/.htpasswd
+      - ./apache-security.conf:/etc/apache2/conf-enabled/apache-security.conf
+
